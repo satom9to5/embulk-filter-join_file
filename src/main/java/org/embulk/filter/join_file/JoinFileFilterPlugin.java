@@ -111,7 +111,6 @@ public class JoinFileFilterPlugin
         final Column baseColumn = inputColumnMap.get(task.getBaseColumn().getName());
 
         final HashMap<String, TimestampParser> timestampParserMap = buildTimestampParserMap(
-                task.getJRuby(),
                 task.getColumns(),
                 task.getJoinedColumnPrefix(),
                 task.getTimeZone());
@@ -136,14 +135,14 @@ public class JoinFileFilterPlugin
         return new Schema(builder.build());
     }
 
-    private HashMap<String, TimestampParser> buildTimestampParserMap(ScriptingContainer jruby, List<ColumnConfig> columns, String joinedColumnPrefix, String timeZone)
+    private HashMap<String, TimestampParser> buildTimestampParserMap(List<ColumnConfig> columns, String joinedColumnPrefix, String timeZone)
     {
         final HashMap<String, TimestampParser> timestampParserMap = Maps.newHashMap();
         for (ColumnConfig columnConfig: columns) {
             if (Types.TIMESTAMP.equals(columnConfig.getType())) {
                 String format = columnConfig.getOption().get(String.class, "format");
                 DateTimeZone timezone = DateTimeZone.forID(timeZone);
-                TimestampParser parser = new TimestampParser(jruby, format, timezone);
+                TimestampParser parser = new TimestampParser(format, timezone);
 
                 String columnName = joinedColumnPrefix + columnConfig.getName();
 
